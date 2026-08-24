@@ -56,12 +56,33 @@ d.forEach(function(it) {
 log("4kzn共捕获网盘链接数:" + listurl.length);
 if (listurl.length){
     initPan();
-    log("4kzn调用panDetailContent, vod:" + (vod?vod.name:"null"));
     let alistVod = panDetailContent(vod ,listurl);
-    log("4kzn解析结果 tabs:" + JSON.stringify(alistVod.tabs) + " lists数:" + (alistVod.lists?alistVod.lists.length:0) + " error:" + (alistVod.error?alistVod.error:"无"));
-    TABS = alistVod.tabs
-    LISTS = alistVod.lists
-    detailError = alistVod.error
+    log("4kzn解析结果 lists数:" + (alistVod.lists?alistVod.lists.length:0) + " error:" + (alistVod.error?alistVod.error:"无"));
+    TABS = alistVod.tabs;
+    LISTS = alistVod.lists;
+    detailError = alistVod.error;
+    if((!LISTS || LISTS.length==0) && listurl.length>0){
+        log("4kzn panDetailContent返回空(可能是.iso蓝光原盘),启用手动构建");
+        let quality = pdfh(html, '.mt-n2 p&&Text') || pdfh(html, '.book-info&&Text') || '蓝光原盘';
+        let manualTabs = [];
+        let manualLists = [];
+        listurl.forEach(function(url){
+            let panName='网盘';
+            if(url.indexOf('quark.cn')>-1) panName='夸克网盘';
+            else if(url.indexOf('baidu.com')>-1) panName='百度网盘';
+            else if(url.indexOf('xunlei.com')>-1) panName='迅雷网盘';
+            else if(url.indexOf('aliyun')>-1) panName='阿里云盘';
+            else if(url.indexOf('115.com')>-1) panName='115网盘';
+            else if(url.indexOf('guangyapan')>-1) panName='光鸭云盘';
+            else if(url.indexOf('drive.uc')>-1) panName='UC网盘';
+            manualTabs.push(panName);
+            manualLists.push([[quality, url]]);
+        });
+        TABS = manualTabs;
+        LISTS = manualLists;
+        detailError = '';
+        log("4kzn手动构建完成 tabs:" + JSON.stringify(TABS) + " quality:" + quality);
+    }
 }else{
     detailError = "4kzn未找到网盘链接";
     log("4kzn未找到任何网盘链接");
