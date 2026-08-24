@@ -34,27 +34,35 @@ var rule = {
         img: ".book-cover img&&data-src",
         desc: ".content&&Text",
         content: ".content&&Text",
-        tabs: `js:
-pdfh=jsp.pdfh;pdfa=jsp.pdfa;pd=jsp.pd;
-TABS=[];LISTS=[];
-let listurl=[];
-let allATags=pdfa(html,'a');
-allATags.forEach(function(a){
-    let href=pd(a,'a&&href',HOST);
-    if(href && (href.indexOf("pan.quark.cn")>-1 || href.indexOf("aliyundrive.com")>-1 || href.indexOf("alipan.com")>-1 || href.indexOf("115.com")>-1 || href.indexOf("pan.baidu.com")>-1 || href.indexOf("drive.uc.cn")>-1)){
-        if(!listurl.includes(href)){
-            listurl.push(href);
-            log("4kzn捕获网盘链接："+href);
+        tabs: `js: pdfh = jsp.pdfh;
+pdfa = jsp.pdfa;
+pd = jsp.pd;
+TABS=[];
+LISTS=[];
+let d = pdfa(html, 'a');
+let listurl = [];
+log("4kzn详情页a标签总数:" + d.length);
+d.forEach(function(it) {
+    let burl = pdfh(it, 'a&&href');
+    if(!burl) return;
+    if (burl.startsWith("https://www.aliyundrive.com/s/") || burl.startsWith("https://www.alipan.com/s/") || burl.startsWith("https://pan.quark.cn/s/") || burl.startsWith("https://pan.quark.cn/s/") || burl.indexOf("115.com")>-1 || burl.indexOf("pan.baidu.com")>-1){
+        if(!listurl.includes(burl)){
+            listurl.push(burl);
+            log("4kzn捕获网盘:" + burl);
         }
     }
 });
-if(listurl.length){
+log("4kzn共捕获网盘链接数:" + listurl.length);
+if (listurl.length){
     initPan();
-    let alistVod=panDetailContent(vod,listurl);
-    TABS=alistVod.tabs;
-    LISTS=alistVod.lists;
-    detailError=alistVod.error;
+    log("4kzn调用panDetailContent, vod标题:" + (vod?vod.name:"null"));
+    let alistVod = panDetailContent(vod ,listurl);
+    log("4kzn panDetailContent返回 tabs:" + JSON.stringify(alistVod.tabs) + " lists长度:" + (alistVod.lists?alistVod.lists.length:0) + " error:" + alistVod.error);
+    TABS = alistVod.tabs
+    LISTS = alistVod.lists
+    detailError = alistVod.error
 }else{
+    detailError = "4kzn未找到网盘链接";
     log("4kzn未找到任何网盘链接");
 }
 `,
