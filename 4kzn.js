@@ -27,8 +27,8 @@ var rule = {
 	lazy:`js:
 	input = panPlay(input,playObj.flag)
 	`,
-    推荐: 'article.book-item;.item-title&&Text;img&&data-src;;a&&href',
-    一级: 'article.book-item;.item-title&&Text;img&&data-src;;a&&href',
+    推荐: 'article.posts-item:has(img);.item-title a&&Text;img&&data-src;;a&&href',
+    一级: 'article.posts-item:has(img);.item-title a&&Text;img&&data-src;;a&&href',
     二级: {
         title: "h1.site-name&&Text",
         img: ".book-cover img&&data-src",
@@ -90,5 +90,5 @@ if (listurl.length){
 `,
 lists: `js:`,
 },
-    搜索: 'article.book-item;.item-title&&Text;img&&data-src;;a&&href',
+    搜索: 'article.posts-item:has(img);.item-title a&&Text;img&&data-src;;a&&href',
 }
