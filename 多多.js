@@ -27,8 +27,8 @@ var rule = {
 	lazy:`js:
 	input = panPlay(input,playObj.flag)
 	`,
-    推荐: 'div.module-item;.module-item-style a&&Text;img&&data-src;;a&&href',
-    一级: 'div.module-item;.module-item-style a&&Text;img&&data-src;;a&&href',
+    推荐: 'div[class="module-item"];.video-name a&&Text;img&&data-src;;a&&href',
+    一级: 'div[class="module-item"];.video-name a&&Text;img&&data-src;;a&&href',
     二级: {
         title: "h1&&Text",
         img: "img&&data-src",
@@ -89,5 +89,5 @@ if (listurl.length){
 `,
 lists: `js:`,
 },
-    搜索: 'div.module-item;.module-item-style a&&Text;img&&data-src;;a&&href',
+    搜索: 'div[class="module-item"];.video-name a&&Text;img&&data-src;;a&&href',
 }
