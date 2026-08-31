@@ -1,6 +1,7 @@
 // ============================================
-// LIBVIO - https://www.libvio.pw
+// LIBVIO - https://www.libvio.pw  (DRPY_Crack 协议)
 // 站点类型: MacCMS (stui 模板)
+// 说明: 与多多.js 同协议(DRPY_Crack), 播放器可直接解析
 // 播放机制:
 //   1) 在线源: 详情页播放面板 -> /w/{id}-{sid}-{nid}.html
 //      播放页内嵌 var player_aaaa = { url: "真实mp4直链" }
@@ -9,33 +10,59 @@
 // 分类URL: /type/{id}-{page}.html  (第1页 /type/{id}-1.html 有效)
 // 详情URL: /detail/{id}.html
 // 搜索API: /index.php/ajax/suggest?mid=1&wd=**&limit=50
-// 注意: 站点有 CDN PoW 人机验证(WAF), 播放器实际能否抓取需实测
 // ============================================
-muban.首图2.二级.title = '.vod-info .title&&Text'
-muban.首图2.二级.img = '.vod-poster__wrap .lazyload&&data-original'
-muban.首图2.二级.desc = '.vod-info .vod-rating .score&&Text;;'
-muban.首图2.二级.content = '.vod-desc .detail-sketch&&Text'
 var rule = {
-	title: 'LIBVIO',
-	模板: '首图2',
-	host: 'https://www.libvio.pw',
-	url: '/type/fyclass-fypage.html',
-	filterable: 0,
-	filter: {},
-	headers: { //网站的请求头,完整支持所有的,常带ua和cookies
-		'User-Agent': 'MOBILE_UA'
-	},
-	class_parse: '.stui-header__menu li:gt(0):lt(7);a&&Text;a&&href;/(\\d+).html',
-	// 站点分类: 电影=1 剧集=2 番剧=4 日韩=15 欧美=16
-	pagecount: {},
-	二级: {
-		"title": ".vod-info .title&&Text",
-		"img": ".vod-poster__wrap .lazyload&&data-original",
-		"desc": ".vod-info .vod-rating .score&&Text;;",
-		"content": ".vod-desc .detail-sketch&&Text",
-		"tabs": `js:
-pdfh=jsp.pdfh;pdfa=jsp.pdfa;pd=jsp.pd;
-TABS=[];LISTS=[];
+    title: 'LIBVIO',
+    host: 'https://www.libvio.pw',
+    homeUrl: '/',
+    url: '/type/fyclass-fypage.html',
+    filter_url: '{{fl.class}}',
+    filter: {},
+    searchUrl: '/index.php/ajax/suggest?mid=1&wd=**&limit=50',
+    searchable: 2,
+    quickSearch: 1,
+    filterable: 0,
+    headers: {
+        'User-Agent': 'MOBILE_UA',
+        'Cookie': ''
+    },
+    timeout: 10000,
+    class_name: '电影&剧集&番剧&日韩&欧美',
+    class_url: '1&2&4&15&16',
+    play_parse: true,
+    play_json: [{
+        re: '*',
+        json: {
+            parse: 0,
+            jx: 0
+        }
+    }],
+	lazy:`js:
+	if(input.indexOf('/w/')>-1){
+		// 站内在线播放页: 请求页面提取 var player_aaaa 中的真实视频地址
+		let html = request(input);
+		let m = html.match(/"url":"([^"]+)"/);
+		if(m){
+			input = m[1].replace(/\\\//g,'/');
+			log("LIBVIO 播放直链: " + input);
+		}
+	} else {
+		// 网盘直链: 交给网盘解析
+		input = panPlay(input, playObj.flag);
+	}
+	`,
+    推荐: 'div[class="stui-vodlist__box"];.title a&&Text;.stui-vodlist__thumb&&data-original;;a&&href',
+    一级: 'div[class="stui-vodlist__box"];.title a&&Text;.stui-vodlist__thumb&&data-original;;a&&href',
+    二级: {
+        title: ".vod-info .title&&Text",
+        img: ".vod-poster__wrap .lazyload&&data-original",
+        desc: ".vod-info .vod-rating .score&&Text;;",
+        content: ".vod-desc .detail-sketch&&Text",
+        tabs: `js: pdfh = jsp.pdfh;
+pdfa = jsp.pdfa;
+pd = jsp.pd;
+TABS=[];
+LISTS=[];
 // 解析详情页所有播放面板(在线播放源 + 网盘源)
 let panels = pdfa(html, '.playlist-panel');
 panels.forEach(function(p){
@@ -59,23 +86,7 @@ panels.forEach(function(p){
 });
 if(TABS.length==0){ detailError='未找到播放源'; }
 `,
-		"lists": `js:`,
-	},
-	lazy: `js:
-if(input.indexOf('/w/')>-1){
-	// 站内在线播放页: 请求页面提取 var player_aaaa 中的真实视频地址
-	let html = request(input);
-	let m = html.match(/"url":"([^"]+)"/);
-	if(m){
-		input = m[1].replace(/\\\//g,'/');
-		log("LIBVIO 播放直链: " + input);
-	}
-} else {
-	// 网盘直链: 交给网盘解析
-	input = panPlay(input, playObj.flag);
-}
-`,
-	searchUrl: '/index.php/ajax/suggest?mid=1&wd=**&limit=50',
-	detailUrl: '/detail/fyid.html', //非必填,二级详情拼接链接
-	搜索: 'json:list;name;pic;;id',
+lists: `js:`,
+},
+    搜索: 'json:list;name;pic;;id',
 }
