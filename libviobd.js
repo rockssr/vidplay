@@ -1,5 +1,5 @@
 // ============================================
-// LIBVIO - https://libviobd.com
+// LIBVIO - https://www.libvio.pw
 // 站点类型: MacCMS (stui 模板)
 // 播放机制:
 //   1) 在线源: 详情页播放面板 -> /w/{id}-{sid}-{nid}.html
@@ -9,17 +9,16 @@
 // 分类URL: /type/{id}-{page}.html  (第1页 /type/{id}-1.html 有效)
 // 详情URL: /detail/{id}.html
 // 搜索API: /index.php/ajax/suggest?mid=1&wd=**&limit=50
+// 注意: 站点有 CDN PoW 人机验证(WAF), 播放器实际能否抓取需实测
 // ============================================
-
 muban.首图2.二级.title = '.vod-info .title&&Text'
 muban.首图2.二级.img = '.vod-poster__wrap .lazyload&&data-original'
 muban.首图2.二级.desc = '.vod-info .vod-rating .score&&Text;;'
 muban.首图2.二级.content = '.vod-desc .detail-sketch&&Text'
-
 var rule = {
 	title: 'LIBVIO',
 	模板: '首图2',
-	host: 'https://libviobd.com',
+	host: 'https://www.libvio.pw',
 	url: '/type/fyclass-fypage.html',
 	filterable: 0,
 	filter: {},
