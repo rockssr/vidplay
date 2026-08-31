@@ -2,7 +2,7 @@ var rule = {
     title: '多多影音',
     host: 'https://tv.yydsys.cc',
     homeUrl: '/',
-    url: '/index.php/vod/type/id/fyclass/page/fypage.html',
+    url: '/index.php/vod/show/id/fyclass/page/fypage.html',
     filter_url: '{{fl.class}}',
     filter: {},
     searchUrl: '/index.php/vod/search.html?wd=**',
